@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI CAR RENTAL SYSTEM - Smart AI-Powered Car Rental</title>
+    <meta name="description" content="Rent premium cars naturally with Google Gemini AI or list your own car on AI Car Rental System.">
+    <!-- Google Fonts & Cyber Techno Mokoto Fallbacks -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;800;900&family=Rajdhani:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css?v=3.0">
+</head>
+<body>
+
+    <!-- Navigation Header -->
+    <header class="navbar">
+        <div class="container navbar-inner">
+            <a href="index.html" class="brand-logo">
+                AI <span class="accent">CAR RENTAL</span> SYSTEM
+            </a>
+            <ul class="nav-links">
+                <li><a href="index.html" class="nav-link active">Home</a></li>
+                <li><a href="find-car.html" class="nav-link">Find Cars</a></li>
+                <li><a href="list-car.html" class="nav-link">List Your Car</a></li>
+            </ul>
+            <div class="nav-action">
+                <a href="find-car.html" class="btn btn-primary btn-sm">Find With AI ✨</a>
+                <button class="menu-toggle" aria-label="Toggle navigation">☰</button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="container hero-content">
+                <div class="hero-tag">
+                    <span>⚡ AI Automotive Intelligence</span>
+                </div>
+                <h1 class="hero-title">
+                    Find Your <span class="gradient-text">Perfect Ride.</span>
+                </h1>
+                <p class="hero-subtitle">
+                    Search cars naturally with AI or list your own car. Experience simple, smart, and transparent automotive rentals.
+                </p>
+                <div class="hero-cta">
+                    <a href="find-car.html" class="btn btn-primary btn-lg">
+                        Find a Car →
+                    </a>
+                    <a href="list-car.html" class="btn btn-secondary btn-lg">
+                        List Your Car
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- How It Works Section -->
+        <section class="how-it-works">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-badge">Simple Process</span>
+                    <h2 class="section-title">How It Works</h2>
+                    <p class="section-desc">Experience seamless car sharing and natural conversational car discovery powered by Gemini AI.</p>
+                </div>
+                <div class="steps-grid">
+                    <div class="step-card">
+                        <div class="step-number">01</div>
+                        <h3 class="step-title">List Your Car</h3>
+                        <p class="step-text">Add your car details. Provide specifications, pricing per day, location, and photos in seconds.</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-number">02</div>
+                        <h3 class="step-title">AI Finds Your Match</h3>
+                        <p class="step-text">Describe what you need in plain English. Our Gemini-powered AI extracts your exact preferences.</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-number">03</div>
+                        <h3 class="step-title">Choose Your Ride</h3>
+                        <p class="step-text">Browse matching cars. Review ratings, features, and specs, then send an instant booking request.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Featured Cars Section -->
+        <section class="cars-section">
+            <div class="container">
+                <div class="section-header" style="display: flex; justify-content: space-between; align-items: flex-end; text-align: left; margin-bottom: 2.5rem;">
+                    <div>
+                        <span class="section-badge">Verified Fleet</span>
+                        <h2 class="section-title">Featured Cars</h2>
+                        <p class="section-desc">Explore popular verified vehicles ready for your next adventure or daily commute.</p>
+                    </div>
+                    <a href="find-car.html" class="btn btn-outline btn-sm" style="margin-bottom: 0.5rem;">
+                        View All Fleet →
+                    </a>
+                </div>
+
+                <div id="featured-cars-container" class="car-grid">
+                    <div class="empty-state">
+                        <div class="loading-spinner" style="width: 32px; height: 32px; margin-bottom: 1rem;"></div>
+                        <h3 class="empty-state-title">Loading Featured Fleet...</h3>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-inner">
+                <div class="footer-brand">
+                    <div class="brand-logo">
+                        AI <span class="accent">CAR RENTAL</span> SYSTEM
+                    </div>
+                    <p class="footer-tagline">Simple, clean AI-powered car rent marketplace.</p>
+                </div>
+                <ul class="footer-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="find-car.html">Find Cars</a></li>
+                    <li><a href="list-car.html">List Your Car</a></li>
+                </ul>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 AI Car Rental System. College Mini Project.</p>
+                <div class="presented-by">🔥 Presented by <span>Group G2</span></div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/api.js"></script>
+    <script src="js/home.js"></script>
+</body>
+</html>

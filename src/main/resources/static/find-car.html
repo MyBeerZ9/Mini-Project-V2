@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Find Cars - AI CAR RENTAL SYSTEM</title>
+    <meta name="description" content="Find the perfect car rent using natural language AI search powered by Google Gemini.">
+    <!-- Google Fonts & Cyber Techno Mokoto Fallbacks -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;800;900&family=Rajdhani:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css?v=3.0">
+</head>
+<body>
+
+    <!-- Navigation Header -->
+    <header class="navbar">
+        <div class="container navbar-inner">
+            <a href="index.html" class="brand-logo">
+                AI <span class="accent">CAR RENTAL</span> SYSTEM
+            </a>
+            <ul class="nav-links">
+                <li><a href="index.html" class="nav-link">Home</a></li>
+                <li><a href="find-car.html" class="nav-link active">Find Cars</a></li>
+                <li><a href="list-car.html" class="nav-link">List Your Car</a></li>
+            </ul>
+            <div class="nav-action">
+                <a href="list-car.html" class="btn btn-secondary btn-sm">List Your Car</a>
+                <button class="menu-toggle" aria-label="Toggle navigation">☰</button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- Search Hero -->
+        <section class="search-hero">
+            <div class="container">
+                <div class="section-header" style="margin-bottom: 2rem;">
+                    <span class="section-badge">Gemini-Powered Natural Search</span>
+                    <h1 class="section-title">Find Your Perfect Car</h1>
+                    <p class="section-desc">Type naturally in your own words. Gemini AI converts your intent into structured search criteria.</p>
+                </div>
+
+                <!-- AI Search Box -->
+                <div class="ai-search-box-wrap">
+                    <div class="ai-search-header">
+                        <span class="ai-badge">✨ Gemini AI Assistant</span>
+                        <span style="font-size: 0.8rem; color: var(--muted);">Natural Language Query</span>
+                    </div>
+
+                    <form id="ai-search-form">
+                        <div class="ai-input-group">
+                            <input
+                                type="text"
+                                id="ai-query-input"
+                                class="ai-input"
+                                placeholder='Describe what you need... e.g. "I need an automatic SUV in Delhi under ₹3000 per day"'
+                                required
+                            />
+                            <button type="submit" id="ai-search-btn" class="btn btn-primary" style="white-space: nowrap;">
+                                <span>Find with AI</span> ✨
+                            </button>
+                            <button type="button" id="ai-clear-btn" class="btn btn-secondary" style="white-space: nowrap; display: none;">
+                                <span>Show All</span> ↺
+                            </button>
+                        </div>
+                    </form>
+
+                    <!-- Example Prompt Chips -->
+                    <div class="ai-suggestions">
+                        <span>Try these:</span>
+                        <button type="button" class="suggestion-chip" data-prompt="I need an automatic SUV in Delhi under 3000 per day">
+                            "Automatic SUV in Delhi under ₹3000"
+                        </button>
+                        <button type="button" class="suggestion-chip" data-prompt="Looking for a 7 seater diesel car in Gurgaon">
+                            "7 seater diesel car in Gurgaon"
+                        </button>
+                        <button type="button" class="suggestion-chip" data-prompt="Electric car in Delhi under 3000 rupees">
+                            "Electric car in Delhi under ₹3000"
+                        </button>
+                        <button type="button" class="suggestion-chip" data-prompt="Comfortable automatic sedan in Delhi">
+                            "Automatic sedan in Delhi"
+                        </button>
+                    </div>
+
+                    <!-- AI Parsed Criteria Box (Shows for Viva Presentation) -->
+                    <div id="ai-criteria-card" class="ai-criteria-card">
+                        <div class="ai-criteria-header">
+                            <span class="ai-criteria-title">🤖 AI Extracted Search Criteria</span>
+                            <span style="font-size: 0.75rem; color: var(--muted);">Structured JSON result from Gemini</span>
+                        </div>
+                        <div id="ai-criteria-chips" class="ai-criteria-chips">
+                            <!-- Populated dynamically via find-car.js -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Search Results Grid -->
+        <section class="cars-section" style="padding-top: 2rem;">
+            <div class="container">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                    <h2 class="section-title" style="font-size: 1.6rem;">Available Vehicles</h2>
+                    <span id="results-count" style="color: var(--muted); font-size: 0.9rem; font-weight: 600;">
+                        Loading...
+                    </span>
+                </div>
+
+                <div id="search-results-grid" class="car-grid">
+                    <!-- Populated dynamically via find-car.js -->
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-inner">
+                <div class="footer-brand">
+                    <div class="brand-logo">
+                        AI <span class="accent">CAR RENTAL</span> SYSTEM
+                    </div>
+                    <p class="footer-tagline">Simple, clean AI-powered car rent marketplace.</p>
+                </div>
+                <ul class="footer-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="find-car.html">Find Cars</a></li>
+                    <li><a href="list-car.html">List Your Car</a></li>
+                </ul>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 AI Car Rental System. College Mini Project.</p>
+                <div class="presented-by">🔥 Presented by <span>Group G2</span></div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/api.js"></script>
+    <script src="js/find-car.js"></script>
+</body>
+</html>

@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vehicle Details - AI CAR RENTAL SYSTEM</title>
+    <meta name="description" content="Detailed vehicle specifications and instant car rent booking on AI Car Rental System.">
+    <!-- Google Fonts & Cyber Techno Mokoto Fallbacks -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;800;900&family=Rajdhani:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css?v=3.0">
+</head>
+<body>
+
+    <!-- Navigation Header -->
+    <header class="navbar">
+        <div class="container navbar-inner">
+            <a href="index.html" class="brand-logo">
+                AI <span class="accent">CAR RENTAL</span> SYSTEM
+            </a>
+            <ul class="nav-links">
+                <li><a href="index.html" class="nav-link">Home</a></li>
+                <li><a href="find-car.html" class="nav-link">Find Cars</a></li>
+                <li><a href="list-car.html" class="nav-link">List Your Car</a></li>
+            </ul>
+            <div class="nav-action">
+                <a href="find-car.html" class="btn btn-outline btn-sm">← Back to Fleet</a>
+                <button class="menu-toggle" aria-label="Toggle navigation">☰</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="details-section">
+        <div class="container">
+            <!-- Loading indicator -->
+            <div id="details-loader" class="empty-state">
+                <div class="loading-spinner" style="width: 36px; height: 36px; border-width: 3px; margin-bottom: 1rem;"></div>
+                <h3 class="empty-state-title">Loading Vehicle Specifications...</h3>
+            </div>
+
+            <!-- Content area -->
+            <div id="details-content" style="display: none;">
+                <div class="details-layout">
+                    <!-- Left Column: Media & Specifications Grid -->
+                    <div class="details-media">
+                        <div class="details-hero-img-wrap">
+                            <img id="detail-hero-img" class="details-hero-img" src="" alt="Car Image" />
+                        </div>
+
+                        <!-- Technical Specifications Matrix -->
+                        <div class="specs-matrix">
+                            <div class="spec-tile">
+                                <div class="spec-tile-label">Gearbox</div>
+                                <div id="spec-transmission" class="spec-tile-val">-</div>
+                            </div>
+                            <div class="spec-tile">
+                                <div class="spec-tile-label">Fuel</div>
+                                <div id="spec-fuel" class="spec-tile-val">-</div>
+                            </div>
+                            <div class="spec-tile">
+                                <div class="spec-tile-label">Capacity</div>
+                                <div id="spec-seats" class="spec-tile-val">-</div>
+                            </div>
+                            <div class="spec-tile">
+                                <div class="spec-tile-label">Model Year</div>
+                                <div id="spec-year" class="spec-tile-val">-</div>
+                            </div>
+                            <div class="spec-tile">
+                                <div class="spec-tile-label">Body Type</div>
+                                <div id="spec-type" class="spec-tile-val">-</div>
+                            </div>
+                            <div class="spec-tile">
+                                <div class="spec-tile-label">Pickup City</div>
+                                <div id="spec-city" class="spec-tile-val">-</div>
+                            </div>
+                        </div>
+
+                        <!-- Description Box -->
+                        <div class="details-desc-box">
+                            <h3>About this vehicle</h3>
+                            <p id="detail-description">-</p>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Pricing & Booking Card -->
+                    <div class="details-info">
+                        <div class="details-header">
+                            <span id="detail-brand-badge" class="details-badge">-</span>
+                            <h1 id="detail-title" class="details-title">-</h1>
+                            <div style="display: flex; align-items: center; gap: 0.5rem; color: var(--muted); font-size: 0.9rem;">
+                                <span>📍 Available in</span>
+                                <strong id="detail-location" style="color: var(--text);">-</strong>
+                            </div>
+                            <div class="details-price-tag">
+                                <span id="detail-price">₹-</span> <span>/ day</span>
+                            </div>
+                        </div>
+
+                        <!-- Host Information Card -->
+                        <div class="owner-card">
+                            <span class="owner-card-title">Listed By Host</span>
+                            <div class="owner-row">
+                                <span class="lbl">Host Name</span>
+                                <span id="owner-name" class="val">-</span>
+                            </div>
+                            <div class="owner-row">
+                                <span class="lbl">Contact Email</span>
+                                <span id="owner-email" class="val">-</span>
+                            </div>
+                            <div class="owner-row">
+                                <span class="lbl">Verification Status</span>
+                                <span class="val" style="color: #4ade80;">Verified Host ✓</span>
+                            </div>
+                        </div>
+
+                        <!-- Availability Calendar Card -->
+                        <div class="availability-card">
+                            <div class="cal-header-bar">
+                                <span class="cal-title">📅 Availability Calendar</span>
+                                <div class="cal-nav-buttons">
+                                    <button type="button" id="cal-prev-btn" class="cal-nav-btn" aria-label="Previous Month">◀</button>
+                                    <span id="cal-month-label" class="cal-month-label">Loading...</span>
+                                    <button type="button" id="cal-next-btn" class="cal-nav-btn" aria-label="Next Month">▶</button>
+                                </div>
+                            </div>
+
+                            <div class="cal-grid-weekdays">
+                                <div>Su</div><div>Mo</div><div>Tu</div><div>We</div><div>Th</div><div>Fr</div><div>Sa</div>
+                            </div>
+                            <div id="cal-days-grid" class="cal-grid-days">
+                                <!-- Calendar days injected by JS -->
+                            </div>
+
+                            <div class="cal-legend">
+                                <span class="legend-item"><span class="legend-dot available"></span> Available</span>
+                                <span class="legend-item"><span class="legend-dot booked"></span> Booked / Reserved</span>
+                                <span class="legend-item"><span class="legend-dot selected"></span> Selected</span>
+                            </div>
+
+                            <div id="reserved-tags-box" class="reserved-tags-container" style="display: none;">
+                                <div class="reserved-tags-title">🔒 Upcoming Bookings:</div>
+                                <div id="reserved-badges-list" class="reserved-badges-list"></div>
+                            </div>
+                        </div>
+
+                        <!-- Instant Booking Form & Conflict Checker -->
+                        <div class="booking-form-wrapper">
+                            <h3 class="booking-form-header">
+                                <span>⚡</span> Reserve This Vehicle
+                            </h3>
+
+                            <form id="car-booking-form">
+                                <div class="booking-dates-row">
+                                    <div class="form-group">
+                                        <label for="book-start-date" class="form-label" style="font-size: 0.8rem;">Pickup Date</label>
+                                        <input type="date" id="book-start-date" class="form-control" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="book-end-date" class="form-label" style="font-size: 0.8rem;">Return Date</label>
+                                        <input type="date" id="book-end-date" class="form-control" required>
+                                    </div>
+                                </div>
+
+                                <!-- Real-Time Conflict / Availability Feedback Banner -->
+                                <div id="conflict-feedback" class="conflict-alert" role="alert">
+                                    <span id="conflict-icon">ℹ️</span>
+                                    <span id="conflict-text">Select pickup and return dates to check availability.</span>
+                                </div>
+
+                                <div class="form-group" style="margin-top: 0.85rem;">
+                                    <label for="book-name" class="form-label" style="font-size: 0.8rem;">Your Full Name</label>
+                                    <input type="text" id="book-name" class="form-control" placeholder="e.g. Rahul Sharma" required>
+                                </div>
+
+                                <div class="booking-dates-row">
+                                    <div class="form-group">
+                                        <label for="book-email" class="form-label" style="font-size: 0.8rem;">Email Address</label>
+                                        <input type="email" id="book-email" class="form-control" placeholder="name@example.com" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="book-phone" class="form-label" style="font-size: 0.8rem;">Phone Number</label>
+                                        <input type="tel" id="book-phone" class="form-control" placeholder="+91 98765 43210" required>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="book-notes" class="form-label" style="font-size: 0.8rem;">Notes / Requirements (Optional)</label>
+                                    <input type="text" id="book-notes" class="form-control" placeholder="e.g. Airport pickup requested">
+                                </div>
+
+                                <div id="booking-price-summary" class="booking-calc-summary" style="display: none;">
+                                    <div>
+                                        <div class="calc-label"><span id="summary-days-count">0</span> Days Rental</div>
+                                        <div style="font-size: 0.75rem; color: var(--muted-dark);">Taxes & insurance included</div>
+                                    </div>
+                                    <div id="summary-total-price" class="calc-price">₹0</div>
+                                </div>
+
+                                <button type="submit" id="submit-booking-btn" class="btn btn-primary btn-block btn-lg" style="margin-top: 0.85rem;" disabled>
+                                    Confirm Reservation 🚗
+                                </button>
+                                <p style="text-align: center; color: var(--muted-dark); font-size: 0.78rem; margin-top: 0.65rem;">
+                                    🛡️ Double-booking prevention active. Guaranteed slot lock.
+                                </p>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Rental Booking Confirmation Receipt Modal -->
+    <div id="booking-modal" class="modal-overlay">
+        <div class="modal-content" style="max-width: 520px;">
+            <div class="modal-icon" style="color: #22c55e;">✓</div>
+            <h2 class="modal-title">Booking Confirmed!</h2>
+            <p class="modal-text" style="margin-bottom: 1rem;">
+                Your reservation has been locked in the calendar with zero double-booking collision.
+            </p>
+
+            <div class="receipt-box">
+                <div class="receipt-row">
+                    <span style="color: var(--muted);">Booking Reference</span>
+                    <span id="modal-ref-code" class="receipt-ref-pill">-</span>
+                </div>
+                <div class="receipt-row">
+                    <span style="color: var(--muted);">Vehicle</span>
+                    <strong id="modal-car-name" style="color: var(--text);">-</strong>
+                </div>
+                <div class="receipt-row">
+                    <span style="color: var(--muted);">Rental Dates</span>
+                    <span id="modal-dates" style="color: var(--text);">-</span>
+                </div>
+                <div class="receipt-row">
+                    <span style="color: var(--muted);">Duration</span>
+                    <span id="modal-days" style="color: var(--text);">-</span>
+                </div>
+                <div class="receipt-row">
+                    <span style="color: var(--muted);">Customer</span>
+                    <span id="modal-customer" style="color: var(--text);">-</span>
+                </div>
+                <div class="receipt-row">
+                    <span style="color: var(--text); font-weight: 700;">Total Amount</span>
+                    <span id="modal-total-amount">-</span>
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 0.75rem; justify-content: center; margin-top: 1rem;">
+                <button type="button" id="print-booking-btn" class="btn btn-secondary">
+                    🖨️ Print Receipt
+                </button>
+                <button type="button" id="close-modal-btn" class="btn btn-primary">
+                    Done
+                </button>
+                <a href="find-car.html" class="btn btn-secondary">
+                    Browse Other Cars
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-inner">
+                <div class="footer-brand">
+                    <div class="brand-logo">
+                        AI <span class="accent">CAR RENTAL</span> SYSTEM
+                    </div>
+                    <p class="footer-tagline">Simple, clean AI-powered car rent marketplace.</p>
+                </div>
+                <ul class="footer-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="find-car.html">Find Cars</a></li>
+                    <li><a href="list-car.html">List Your Car</a></li>
+                </ul>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 AI Car Rental System. College Mini Project.</p>
+                <div class="presented-by">🔥 Presented by <span>Group G2</span></div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/api.js"></script>
+    <script src="js/car-details.js"></script>
+</body>
+</html>

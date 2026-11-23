@@ -1,0 +1,29 @@
+# Maven / Java
+target/
+*.class
+*.jar
+*.war
+*.ear
+
+# Tools and Maven binaries
+tools/
+
+# Environment and secrets
+.env
+*.env.local
+
+# IDE / Editor files
+.vscode/
+.idea/
+*.iml
+.project
+.classpath
+.settings/
+
+# OS specific
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Log files
+*.log

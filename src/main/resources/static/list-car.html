@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>List Your Car - AI CAR RENTAL SYSTEM</title>
+    <meta name="description" content="List your car on car rent marketplace and start earning rental income.">
+    <!-- Google Fonts & Cyber Techno Mokoto Fallbacks -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;800;900&family=Rajdhani:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css?v=3.0">
+</head>
+<body>
+
+    <!-- Navigation Header -->
+    <header class="navbar">
+        <div class="container navbar-inner">
+            <a href="index.html" class="brand-logo">
+                AI <span class="accent">CAR RENTAL</span> SYSTEM
+            </a>
+            <ul class="nav-links">
+                <li><a href="index.html" class="nav-link">Home</a></li>
+                <li><a href="find-car.html" class="nav-link">Find Cars</a></li>
+                <li><a href="list-car.html" class="nav-link active">List Your Car</a></li>
+            </ul>
+            <div class="nav-action">
+                <a href="find-car.html" class="btn btn-outline btn-sm">Find Cars ✨</a>
+                <button class="menu-toggle" aria-label="Toggle navigation">☰</button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <div class="form-card">
+                <div class="form-header">
+                    <span class="section-badge">Earn Rental Income</span>
+                    <h1 class="section-title" style="font-size: 2rem;">List Your Car</h1>
+                    <p class="section-desc" style="text-align: left; margin: 0;">
+                        Enter your vehicle information to make it instantly available for renters on car rent.
+                    </p>
+                </div>
+
+                <!-- Alert Banners -->
+                <div id="alert-success" class="alert alert-success"></div>
+                <div id="alert-danger" class="alert alert-danger"></div>
+
+                <form id="list-car-form">
+                    <div class="form-grid">
+                        <!-- Car Name -->
+                        <div class="form-group full-width">
+                            <label class="form-label" for="carName">
+                                Car Listing Title / Name <span class="required">*</span>
+                            </label>
+                            <input
+                                type="text"
+                                id="carName"
+                                name="carName"
+                                class="form-control"
+                                placeholder="e.g. Hyundai Creta SX(O) Automatic"
+                                required
+                            />
+                        </div>
+
+                        <!-- Brand -->
+                        <div class="form-group">
+                            <label class="form-label" for="brand">
+                                Brand <span class="required">*</span>
+                            </label>
+                            <input
+                                type="text"
+                                id="brand"
+                                name="brand"
+                                class="form-control"
+                                placeholder="e.g. Hyundai, Tata, Kia"
+                                required
+                            />
+                        </div>
+
+                        <!-- Model -->
+                        <div class="form-group">
+                            <label class="form-label" for="model">
+                                Model <span class="required">*</span>
+                            </label>
+                            <input
+                                type="text"
+                                id="model"
+                                name="model"
+                                class="form-control"
+                                placeholder="e.g. Creta, Nexon, Seltos"
+                                required
+                            />
+                        </div>
+
+                        <!-- Year -->
+                        <div class="form-group">
+                            <label class="form-label" for="year">
+                                Model Year <span class="required">*</span>
+                            </label>
+                            <input
+                                type="number"
+                                id="year"
+                                name="year"
+                                class="form-control"
+                                placeholder="e.g. 2023"
+                                min="1990"
+                                max="2030"
+                                required
+                            />
+                        </div>
+
+                        <!-- Car Type -->
+                        <div class="form-group">
+                            <label class="form-label" for="carType">
+                                Car Type <span class="required">*</span>
+                            </label>
+                            <select id="carType" name="carType" class="form-control" required>
+                                <option value="" disabled selected>Select vehicle type</option>
+                                <option value="Hatchback">Hatchback</option>
+                                <option value="Sedan">Sedan</option>
+                                <option value="SUV">SUV</option>
+                                <option value="MUV">MUV</option>
+                                <option value="Luxury">Luxury</option>
+                                <option value="Electric">Electric</option>
+                            </select>
+                        </div>
+
+                        <!-- Fuel Type -->
+                        <div class="form-group">
+                            <label class="form-label" for="fuelType">
+                                Fuel Type <span class="required">*</span>
+                            </label>
+                            <select id="fuelType" name="fuelType" class="form-control" required>
+                                <option value="" disabled selected>Select fuel type</option>
+                                <option value="Petrol">Petrol</option>
+                                <option value="Diesel">Diesel</option>
+                                <option value="Electric">Electric</option>
+                                <option value="Hybrid">Hybrid</option>
+                                <option value="CNG">CNG</option>
+                            </select>
+                        </div>
+
+                        <!-- Transmission -->
+                        <div class="form-group">
+                            <label class="form-label" for="transmission">
+                                Transmission <span class="required">*</span>
+                            </label>
+                            <select id="transmission" name="transmission" class="form-control" required>
+                                <option value="" disabled selected>Select gearbox</option>
+                                <option value="Automatic">Automatic</option>
+                                <option value="Manual">Manual</option>
+                            </select>
+                        </div>
+
+                        <!-- Seats -->
+                        <div class="form-group">
+                            <label class="form-label" for="seats">
+                                Seating Capacity <span class="required">*</span>
+                            </label>
+                            <input
+                                type="number"
+                                id="seats"
+                                name="seats"
+                                class="form-control"
+                                placeholder="e.g. 5"
+                                min="2"
+                                max="15"
+                                required
+                            />
+                        </div>
+
+                        <!-- Location -->
+                        <div class="form-group">
+                            <label class="form-label" for="location">
+                                City / Location <span class="required">*</span>
+                            </label>
+                            <input
+                                type="text"
+                                id="location"
+                                name="location"
+                                class="form-control"
+                                placeholder="e.g. Delhi, Gurgaon, Noida, Jaipur"
+                                required
+                            />
+                        </div>
+
+                        <!-- Price Per Day -->
+                        <div class="form-group">
+                            <label class="form-label" for="pricePerDay">
+                                Price Per Day (₹) <span class="required">*</span>
+                            </label>
+                            <input
+                                type="number"
+                                id="pricePerDay"
+                                name="pricePerDay"
+                                class="form-control"
+                                placeholder="e.g. 2500"
+                                min="100"
+                                step="50"
+                                required
+                            />
+                        </div>
+
+                        <!-- Image URL -->
+                        <div class="form-group">
+                            <label class="form-label" for="imageUrl">
+                                Car Image URL (Optional)
+                            </label>
+                            <input
+                                type="url"
+                                id="imageUrl"
+                                name="imageUrl"
+                                class="form-control"
+                                placeholder="https://images.unsplash.com/..."
+                            />
+                        </div>
+
+                        <!-- Description -->
+                        <div class="form-group full-width">
+                            <label class="form-label" for="description">
+                                Vehicle Description
+                            </label>
+                            <textarea
+                                id="description"
+                                name="description"
+                                class="form-control"
+                                placeholder="Highlight key vehicle features (sunroof, cruise control, audio system, condition, etc.)..."
+                            ></textarea>
+                        </div>
+
+                        <!-- Owner Name -->
+                        <div class="form-group">
+                            <label class="form-label" for="ownerName">
+                                Host / Owner Name <span class="required">*</span>
+                            </label>
+                            <input
+                                type="text"
+                                id="ownerName"
+                                name="ownerName"
+                                class="form-control"
+                                placeholder="e.g. Rajesh Sharma"
+                                required
+                            />
+                        </div>
+
+                        <!-- Owner Email -->
+                        <div class="form-group">
+                            <label class="form-label" for="ownerEmail">
+                                Host / Owner Email <span class="required">*</span>
+                            </label>
+                            <input
+                                type="email"
+                                id="ownerEmail"
+                                name="ownerEmail"
+                                class="form-control"
+                                placeholder="e.g. rajesh@example.com"
+                                required
+                            />
+                        </div>
+                    </div>
+
+                    <div class="form-footer">
+                        <a href="index.html" class="btn btn-secondary">Cancel</a>
+                        <button type="submit" id="submit-car-btn" class="btn btn-primary btn-lg">
+                            List My Car 🚀
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-inner">
+                <div class="footer-brand">
+                    <div class="brand-logo">
+                        AI <span class="accent">CAR RENTAL</span> SYSTEM
+                    </div>
+                    <p class="footer-tagline">Simple, clean AI-powered car rent marketplace.</p>
+                </div>
+                <ul class="footer-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="find-car.html">Find Cars</a></li>
+                    <li><a href="list-car.html">List Your Car</a></li>
+                </ul>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 AI Car Rental System. College Mini Project.</p>
+                <div class="presented-by">🔥 Presented by <span>Group G2</span></div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/api.js"></script>
+    <script src="js/list-car.js"></script>
+</body>
+</html>
