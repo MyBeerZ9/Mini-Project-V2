@@ -97,6 +97,39 @@
                             </div>
                         </div>
 
+                        <!-- Step 2: Vehicle Compliance & AI Yield Intelligence Card -->
+                        <div class="card" style="margin-bottom: 1.5rem; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 1.25rem;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                                <h4 style="margin: 0; font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--accent);">
+                                    🛡️ Compliance & Safety OS
+                                </h4>
+                                <span id="badge-compliance" class="badge" style="background: rgba(34, 197, 94, 0.2); color: #4ade80; border: 1px solid #22c55e; padding: 0.2rem 0.6rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700;">
+                                    VERIFIED COMPLIANT
+                                </span>
+                            </div>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; font-size: 0.8rem; color: var(--muted);">
+                                <div>RC & Insurance: <strong style="color: var(--text);">Valid / Active</strong></div>
+                                <div>Security Deposit: <strong style="color: var(--text);">₹3,000 (Refundable)</strong></div>
+                                <div>Custody Protection: <strong style="color: var(--text);">Geofence & Pre-Trip Hash</strong></div>
+                                <div>Partner: <strong style="color: var(--text);">Apex Mobility Franchise</strong></div>
+                            </div>
+
+                            <hr style="border: none; border-top: 1px solid rgba(255, 255, 255, 0.08); margin: 0.85rem 0;" />
+
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <div>
+                                    <span style="font-size: 0.8rem; color: var(--muted);">AI Dynamic Rate Advisor:</span>
+                                    <div id="ai-price-rate" style="font-size: 1.1rem; font-weight: 800; color: #38bdf8;">Evaluating Demand...</div>
+                                </div>
+                                <button id="btn-refresh-pricing" class="btn btn-outline btn-sm" style="font-size: 0.75rem; padding: 0.35rem 0.75rem;">
+                                    ⚡ Recalculate Yield
+                                </button>
+                            </div>
+                            <div id="ai-price-rationale" style="font-size: 0.75rem; color: var(--muted); margin-top: 0.4rem; font-style: italic;">
+                                AI evaluating weekend traffic, segment demand, and booking occupancy...
+                            </div>
+                        </div>
+
                         <!-- Host Information Card -->
                         <div class="owner-card">
                             <span class="owner-card-title">Listed By Host</span>

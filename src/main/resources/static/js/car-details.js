@@ -42,10 +42,43 @@ async function initCarDetailsPage() {
         initBookingForm();
         renderCalendar();
         renderReservedBadges();
+        loadAiPricingAdvice(carId);
 
     } catch (err) {
         console.error('Failed to load car details:', err);
         showError(err.message || 'Vehicle not found or no longer available.');
+    }
+
+    async function loadAiPricingAdvice(carId) {
+        const rateEl = document.getElementById('ai-price-rate');
+        const ratEl = document.getElementById('ai-price-rationale');
+        const refreshBtn = document.getElementById('btn-refresh-pricing');
+
+        try {
+            const startInput = document.getElementById('book-start-date');
+            const endInput = document.getElementById('book-end-date');
+            const sDate = startInput && startInput.value ? startInput.value : '';
+            const eDate = endInput && endInput.value ? endInput.value : '';
+
+            const advice = await Api.getPricingAdvice(carId, sDate, eDate);
+            if (rateEl) {
+                rateEl.innerHTML = `₹${advice.recommendedDailyRate.toLocaleString('en-IN')} <small style="font-size: 0.75rem; color: var(--muted);">/ day (${advice.demandLevel} Demand)</small>`;
+            }
+            if (ratEl) {
+                ratEl.textContent = `💡 ${advice.rationale} • Franchise Yield: ₹${advice.estimatedPartnerYield.toLocaleString('en-IN')}`;
+            }
+        } catch (e) {
+            if (rateEl) rateEl.textContent = 'Standard Seasonal Rate Active';
+            if (ratEl) ratEl.textContent = 'Dynamic yield advisor fallback applied safely.';
+        }
+
+        if (refreshBtn && !refreshBtn.dataset.bound) {
+            refreshBtn.dataset.bound = 'true';
+            refreshBtn.addEventListener('click', (ev) => {
+                ev.preventDefault();
+                loadAiPricingAdvice(carId);
+            });
+        }
     }
 
     function populateCarDetails(car) {
@@ -465,6 +498,7 @@ async function submitBookingForm(form) {
         currentBookedRanges = await Api.getBookedRanges(currentCar.id).catch(() => currentBookedRanges);
         renderCalendar();
         renderReservedBadges();
+        loadAiPricingAdvice(carId);
 
         // Reset form inputs
         form.reset();
@@ -479,8 +513,14 @@ async function submitBookingForm(form) {
         if (feedbackBox) {
             feedbackBox.style.display = 'flex';
             feedbackBox.className = 'conflict-alert danger';
-            if (feedbackIcon) feedbackIcon.textContent = '❌';
-            if (feedbackText) feedbackText.textContent = err.message || 'Booking conflict: Vehicle already reserved.';
+            if (feedbackIcon) {
+                if (err.message && err.message.includes('compliance')) feedbackIcon.textContent = '🛡️';
+                else if (err.message && err.message.includes('reserved')) feedbackIcon.textContent = '🔒';
+                else feedbackIcon.textContent = '❌';
+            }
+            if (feedbackText) {
+                feedbackText.innerHTML = `<strong>Reservation Blocked:</strong> ${err.message || 'Booking conflict or compliance rule triggered.'}`;
+            }
         }
     } finally {
         submitBtn.disabled = false;

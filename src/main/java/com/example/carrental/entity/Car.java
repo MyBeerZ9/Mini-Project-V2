@@ -1,6 +1,7 @@
 package com.example.carrental.entity;
 
 import jakarta.persistence.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -59,6 +60,30 @@ public class Car {
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
+    // Step 2B: Partner & Compliance Fields
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "partner_id")
+    private Partner partner;
+
+    @Column(name = "rc_expiry_date")
+    private LocalDate rcExpiryDate;
+
+    @Column(name = "insurance_expiry_date")
+    private LocalDate insuranceExpiryDate;
+
+    @Column(name = "puc_expiry_date")
+    private LocalDate pucExpiryDate;
+
+    @Column(name = "permit_expiry_date")
+    private LocalDate permitExpiryDate;
+
+    // Step 2C: Pricing Floor / Ceiling Bands
+    @Column(name = "min_rate_floor")
+    private Double minRateFloor;
+
+    @Column(name = "max_rate_ceiling")
+    private Double maxRateCeiling;
+
     public Car() {
     }
 
@@ -70,6 +95,21 @@ public class Car {
         if (this.available == null) {
             this.available = true;
         }
+        if (this.minRateFloor == null && this.pricePerDay != null) {
+            this.minRateFloor = Math.round(this.pricePerDay * 0.75 * 100.0) / 100.0;
+        }
+        if (this.maxRateCeiling == null && this.pricePerDay != null) {
+            this.maxRateCeiling = Math.round(this.pricePerDay * 1.60 * 100.0) / 100.0;
+        }
+    }
+
+    public boolean isComplianceValid(LocalDate referenceDate) {
+        LocalDate checkDate = (referenceDate != null) ? referenceDate : LocalDate.now();
+        if (rcExpiryDate != null && rcExpiryDate.isBefore(checkDate)) return false;
+        if (insuranceExpiryDate != null && insuranceExpiryDate.isBefore(checkDate)) return false;
+        if (pucExpiryDate != null && pucExpiryDate.isBefore(checkDate)) return false;
+        if (permitExpiryDate != null && permitExpiryDate.isBefore(checkDate)) return false;
+        return true;
     }
 
     public Long getId() {
@@ -206,5 +246,61 @@ public class Car {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public Partner getPartner() {
+        return partner;
+    }
+
+    public void setPartner(Partner partner) {
+        this.partner = partner;
+    }
+
+    public LocalDate getRcExpiryDate() {
+        return rcExpiryDate;
+    }
+
+    public void setRcExpiryDate(LocalDate rcExpiryDate) {
+        this.rcExpiryDate = rcExpiryDate;
+    }
+
+    public LocalDate getInsuranceExpiryDate() {
+        return insuranceExpiryDate;
+    }
+
+    public void setInsuranceExpiryDate(LocalDate insuranceExpiryDate) {
+        this.insuranceExpiryDate = insuranceExpiryDate;
+    }
+
+    public LocalDate getPucExpiryDate() {
+        return pucExpiryDate;
+    }
+
+    public void setPucExpiryDate(LocalDate pucExpiryDate) {
+        this.pucExpiryDate = pucExpiryDate;
+    }
+
+    public LocalDate getPermitExpiryDate() {
+        return permitExpiryDate;
+    }
+
+    public void setPermitExpiryDate(LocalDate permitExpiryDate) {
+        this.permitExpiryDate = permitExpiryDate;
+    }
+
+    public Double getMinRateFloor() {
+        return minRateFloor;
+    }
+
+    public void setMinRateFloor(Double minRateFloor) {
+        this.minRateFloor = minRateFloor;
+    }
+
+    public Double getMaxRateCeiling() {
+        return maxRateCeiling;
+    }
+
+    public void setMaxRateCeiling(Double maxRateCeiling) {
+        this.maxRateCeiling = maxRateCeiling;
     }
 }

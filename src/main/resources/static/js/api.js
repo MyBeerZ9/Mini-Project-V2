@@ -59,6 +59,71 @@ const Api = {
      */
     async searchCars(filters) {
         const params = new URLSearchParams();
+        if (filters) {
+            Object.keys(filters).forEach(k => {
+                if (filters[k] !== undefined && filters[k] !== null && filters[k] !== '') {
+                    params.append(k, filters[k]);
+                }
+            });
+        }
+        const res = await fetch(`${API_BASE}/cars/search?${params.toString()}`);
+        if (!res.ok) throw new Error(await parseError(res));
+        return res.json();
+    },
+
+    // ── Step 2A: Custody & Inspection APIs ──
+
+    async getCustodyDossier(bookingId) {
+        const res = await fetch(`${API_BASE}/bookings/${bookingId}/custody-dossier`);
+        if (!res.ok) throw new Error(await parseError(res));
+        return res.json();
+    },
+
+    async recordInspection(bookingId, inspectionData) {
+        const res = await fetch(`${API_BASE}/bookings/${bookingId}/inspections`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(inspectionData)
+        });
+        if (!res.ok) throw new Error(await parseError(res));
+        return res.json();
+    },
+
+    async raiseCustodyAlert(bookingId, alertData) {
+        const res = await fetch(`${API_BASE}/bookings/${bookingId}/alerts`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(alertData)
+        });
+        if (!res.ok) throw new Error(await parseError(res));
+        return res.json();
+    },
+
+    // ── Step 2B: Partner & Fleet Compliance APIs ──
+
+    async getFleetComplianceReport() {
+        const res = await fetch(`${API_BASE}/partners/fleet/compliance-report`);
+        if (!res.ok) throw new Error(await parseError(res));
+        return res.json();
+    },
+
+    async getAllPartners() {
+        const res = await fetch(`${API_BASE}/partners`);
+        if (!res.ok) throw new Error(await parseError(res));
+        return res.json();
+    },
+
+    // ── Step 2C: AI Dynamic Rate & Yield Advisor API ──
+
+    async getPricingAdvice(carId, startDate, endDate) {
+        const params = new URLSearchParams();
+        if (startDate) params.append('startDate', startDate);
+        if (endDate) params.append('endDate', endDate);
+        const res = await fetch(`${API_BASE}/ai/pricing-advice/${carId}?${params.toString()}`);
+        if (!res.ok) throw new Error(await parseError(res));
+        return res.json();
+    },
+        const params = new URLSearchParams();
         for (const [key, val] of Object.entries(filters)) {
             if (val !== null && val !== undefined && val !== '') {
                 params.append(key, val);

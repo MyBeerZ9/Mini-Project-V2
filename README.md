@@ -1,12 +1,13 @@
-# AI-Powered Car Rental System (CARVIA)
+# AI-Powered Car Rental & Fleet Custody Operating System (CARVIA)
 
 [![Java](https://img.shields.io/badge/Java-21-orange.svg)](https://www.oracle.com/java/)
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.3.4-brightgreen.svg)](https://spring.io/projects/spring-boot)
-[![Gemini AI](https://img.shields.io/badge/AI-Google%20Gemini%20API-blue.svg)](https://aistudio.google.com/)
-[![PostgreSQL](https://img.shields.io/badge/Database-PostgreSQL%20%2F%20Supabase-336791.svg)](https://supabase.com/)
+[![Flyway](https://img.shields.io/badge/Migration-Flyway%20V1%20%26%20V2-red.svg)](https://flywaydb.org/)
+[![Database](https://img.shields.io/badge/Database-PostgreSQL%2017%20%2F%20Supabase-336791.svg)](https://supabase.com/)
+[![Gemini AI](https://img.shields.io/badge/AI-Google%20Gemini%20Flash-blue.svg)](https://aistudio.google.com/)
 [![License](https://img.shields.io/badge/License-Academic-lightgrey.svg)]()
 
-> **Mini Project (BCC 351) — Review 2**  
+> **Mini Project (BCC 351) — Final Architecture & Evaluation Report**  
 > **Department of Computer Science & Engineering**  
 > **IMS Engineering College, Ghaziabad**  
 > *(Affiliated to Dr. A.P.J. Abdul Kalam Technical University, Lucknow | Academic Session 2026-27)*
@@ -28,174 +29,174 @@
 
 ---
 
-## 📌 Problem Statement
+## 🚀 Architectural Overview (Step 1 & Step 2 Milestones)
 
-Traditional car rental platforms typically present users with an overwhelming catalog of vehicles without considering their individual preferences, budget constraints, travel context, or passenger capacity.
-- **Manual Overhead:** Users must manually check dozens of vehicles, compare fuel types, daily pricing, availability schedules, and vehicle specifications.
-- **Static Filters:** Conventional systems rely on rigid dropdowns and boolean filters that cannot interpret colloquial or situational search intent (e.g., *"Need a comfortable 7-seater SUV for a 4-day mountain trip with friends on a modest budget"*).
-- **Booking Overlaps & Friction:** Many basic systems lack dynamic date-conflict prevention, leading to overlapping booking disputes or booking errors.
+CARVIA evolved from a basic vehicle listing catalog into a **concurrency-safe, franchise-ready Fleet & Custody Operating System** featuring:
+
+1. **Production-Grade Database Evolution:**
+   - Managed schema versioning via **Flyway V1 (`V1__init_carvia_schema.sql`)** and **V2 (`V2__partner_custody_pricing_upgrade.sql`)**.
+   - Profile-driven architecture (`dev` with H2 in-memory `MODE=PostgreSQL`, and `prod` with **Supabase PostgreSQL 17 via IPv4 Session Pooler**).
+   - Hibernate schema validation (`ddl-auto=validate`) guaranteeing zero uncontrolled schema drift.
+
+2. **Concurrency Safety & Double-Booking Prevention:**
+   - **Pessimistic Write Locking (`@Lock(LockModeType.PESSIMISTIC_WRITE)`)** on target vehicle rows to serialize concurrent reservation attempts.
+   - Distinct **HTTP 409 Conflict** error mapping via `BookingConflictException`.
+
+3. **Step 2A: Custody Proof, Overdue Fines & Theft Escalation:**
+   - **Strict Booking State Machine:** `PENDING_KYC` ➔ `CONFIRMED` ➔ `ACTIVE_TRIP` ➔ `OVERDUE` ➔ `ESCALATED_THEFT_HOLD` ➔ `COMPLETED`.
+   - Pre-trip and post-trip digital condition proof with cryptographic evidence hashing (`evidenceHash`), odometer, and battery/fuel levels.
+   - Geofence tamper & theft detection triggering automatic theft holds and security deposit forfeiture.
+   - Live audit dossier generator: `GET /api/bookings/{id}/custody-dossier`.
+
+4. **Step 2B: Partner / Franchise Fleet & Compliance OS:**
+   - Franchise partner profiles (`Partner`) with custom revenue-share models (e.g., 82.5% partner yield).
+   - Document compliance engine (RC, Insurance, PUC, Commercial Permit). Bookings are strictly blocked with **HTTP 422 Unprocessable Entity** if vehicle documents are expired.
+   - Fleet-wide compliance audit reporting: `GET /api/partners/fleet/compliance-report`.
+
+5. **Step 2C: AI Dynamic Rate & Yield Advisor:**
+   - Real-time yield optimization engine powered by **Google Gemini AI** (`GET /api/ai/pricing-advice/{carId}`).
+   - Multi-factor deterministic fallback engine (weekend demand multipliers, fleet occupancy, luxury/SUV segment uplifts) and in-memory thread-safe caching (`ConcurrentHashMap`) for zero downtime.
 
 ---
 
-## 🎯 Objectives & Aims
+## 🏛️ System Architecture Diagrams
 
-1. **Intelligent Natural Language Vehicle Discovery:** Empower users to describe their journey or vehicle requirements in natural language and receive context-aware recommendations via Google Gemini AI.
-2. **Personalized Recommendations:** Match user requirements (budget, seats, transmission, fuel, body type) to the available fleet with clear AI reasoning.
-3. **Robust Booking & Availability Engine:** Prevent date conflicts through automated calendar overlap checks at both repository and controller levels.
-4. **Intuitive End-to-End User Experience:** Provide a modern web interface with real-time price estimation, disabled booked date ranges, instant booking receipts, and car listing capabilities.
-
----
-
-## 🛠️ System Architecture & Methodology
-
-### Booking Conflict & Verification Flow
+### 1. Unified Entity-Relationship & Flyway Migration Schema
 
 ```mermaid
-flowchart TD
-    Start([User selects car & date range]) --> Step1[Frontend loads car & active booked ranges]
-    Step1 --> Step2{Frontend checks date overlap?}
-    Step2 -- Overlap detected --> Err1[Display date conflict error in UI]
-    Step2 -- Dates valid --> Step3[Submit booking form: POST /api/bookings]
-    Step3 --> Step4{Backend: Dates valid, ordered & future?}
-    Step4 -- No --> Err2[Return 400 Bad Request]
-    Step4 -- Yes --> Step5[BookingRepository checks non-cancelled overlapping records]
-    Step5 --> Step6{Any active conflict?}
-    Step6 -- Yes --> Err3[Throw ConflictException: Car already booked]
-    Step6 -- No --> Step7[Calculate inclusive rental days & total price]
-    Step7 --> Step8[Save Booking entity linked to Car in Database]
-    Step8 --> Step9[Return BookingResponse JSON & Reference Code]
-    Step9 --> End([Show receipt modal & update calendar availability])
+erDiagram
+    PARTNERS ||--o{ CARS : "franchises"
+    CARS ||--o{ BOOKINGS : "reserved_in"
+    BOOKINGS ||--o{ VEHICLE_INSPECTIONS : "inspected_by"
+    BOOKINGS ||--o{ CUSTODY_ALERTS : "monitored_by"
+
+    PARTNERS {
+        bigint id PK
+        varchar partner_name
+        varchar partner_code UK
+        double revenue_share_percent
+        boolean verified
+        boolean active
+    }
+
+    CARS {
+        bigint id PK
+        varchar car_name
+        varchar brand
+        double price_per_day
+        bigint partner_id FK
+        date rc_expiry_date
+        date insurance_expiry_date
+        date puc_expiry_date
+        date permit_expiry_date
+        double min_rate_floor
+        double max_rate_ceiling
+        boolean available
+    }
+
+    BOOKINGS {
+        bigint id PK
+        varchar booking_reference UK
+        bigint car_id FK
+        date start_date
+        date end_date
+        double total_price
+        varchar status
+        varchar kyc_status
+        double security_deposit
+        varchar deposit_status
+        double overdue_fee
+        varchar escalation_reason
+    }
+
+    VEHICLE_INSPECTIONS {
+        bigint id PK
+        bigint booking_id FK
+        varchar inspection_type
+        int odometer_km
+        int fuel_or_battery_percent
+        varchar evidence_hash
+        varchar inspected_by
+    }
+
+    CUSTODY_ALERTS {
+        bigint id PK
+        bigint booking_id FK
+        varchar alert_type
+        varchar severity
+        varchar location_snapshot
+        boolean resolved
+    }
 ```
 
-### AI Recommendation Flow
+### 2. Custody & Escalation State Machine
 
 ```mermaid
-flowchart LR
-    A[User Natural Language Prompt] --> B[AiSearchController /api/ai/search]
-    B --> C[Gemini AI Engine]
-    C --> D[Extract Criteria: Budget, Fuel, Type, Seats]
-    D --> E[Filter Database Fleet]
-    E --> F[Generate Personalized Recommendation & Reasoning]
-    F --> G[Return Recommended Cars to Frontend]
+stateDiagram-v2
+    [*] --> PENDING_KYC
+    PENDING_KYC --> CONFIRMED : KYC Approved
+    PENDING_KYC --> CANCELLED : Customer Reject
+    CONFIRMED --> ACTIVE_TRIP : Pre-Trip Inspection Completed
+    CONFIRMED --> CANCELLED : Cancellation Window
+    ACTIVE_TRIP --> OVERDUE : Schedule Return Overdue (SLA Exceeded)
+    ACTIVE_TRIP --> ESCALATED_THEFT_HOLD : Geofence Breach / Tracker Tamper
+    ACTIVE_TRIP --> COMPLETED : Post-Trip Inspection & Deposit Released
+    OVERDUE --> ESCALATED_THEFT_HOLD : 48h No Contact & Deposit Forfeited
+    OVERDUE --> COMPLETED : Fines Settled & Vehicle Restored
+    ESCALATED_THEFT_HOLD --> COMPLETED : Legal / Recovery Resolution
+    COMPLETED --> [*]
+    CANCELLED --> [*]
 ```
 
 ---
 
-## 💻 Tech Stack
+## 🛠️ REST API Specification (Selected Endpoints)
 
-| Layer | Technology | Details |
-|:---|:---|:---|
-| **Frontend** | HTML5, CSS3, Vanilla JavaScript (ES6+) | Responsive UI, interactive booking modals, date pickers, fetch API |
-| **Backend** | Java 21, Spring Boot 3.3.4 | Spring Web, Spring Data JPA, Hibernate ORM, Bean Validation |
-| **AI Integration** | Google Gemini API (Gemini 3.8 Flash) | Natural language prompt parsing & personalized recommendation |
-| **Database** | PostgreSQL (Supabase Cloud) | Relational persistence with foreign keys, index optimization |
-| **Build & Tooling** | Apache Maven 3.9+, Git & GitHub | Maven Wrapper (`mvnw`), GitHub Actions CI |
-
----
-
-## 📚 Literature Survey
-
-| Author / Source | Existing Work | Relevance to Our Project |
-|:---|:---|:---|
-| **Rathore & Chaudhary (2018)**, *IJMB* | Surveyed 300+ customers analyzing India's self-drive rental industry, customer expectations, and fleet demand patterns. | Informs our feature set: clear pricing breakdown, fleet diversity, and transparent fuel/mileage terms. |
-| **Mobility Foresights (2024–2030)** | Market analysis on India's self-drive vehicle growth, major operators, and tech-driven booking shifts. | Validates demand for automated, frictionless digital booking platforms. |
-| **Genikomsakis & Ioakimidis (2018)**, *Sustainable Cities and Society* | Assessed customer adoption and fleet management dynamics for EV/sharing services. | Guided inclusion of modern electric vehicles (e.g., Tata Nexon EV) and flexible rental period calculations. |
+| Method | Endpoint | Description | Status Code |
+|---|---|---|---|
+| `GET` | `/api/cars` | Fetch all available vehicles | `200 OK` |
+| `POST` | `/api/bookings` | Create reservation with pessimistic lock | `201 Created` / `409 Conflict` |
+| `GET` | `/api/bookings/{id}/custody-dossier` | Audit dossier (inspections, alerts, KYC) | `200 OK` |
+| `POST` | `/api/bookings/{id}/inspections` | Record pre/post-trip vehicle inspection | `201 Created` |
+| `POST` | `/api/bookings/{id}/alerts` | Ingest geofence/tamper alert | `201 Created` |
+| `GET` | `/api/partners/fleet/compliance-report` | Audit RC/Insurance/PUC compliance | `200 OK` |
+| `GET` | `/api/ai/pricing-advice/{carId}` | AI dynamic rate & franchise yield advice | `200 OK` |
 
 ---
 
-## 🚀 API Endpoints Overview
+## 💻 Running the Application
 
-### Cars (`/api/cars`)
-- `GET /api/cars` — Fetch all available cars
-- `GET /api/cars/featured` — Fetch featured cars for homepage
-- `GET /api/cars/{id}` — Fetch details for a specific car
-- `POST /api/cars` — List a new car (with validation)
-- `PUT /api/cars/{id}` — Update car details
-- `DELETE /api/cars/{id}` — Remove a car
+### Dev Mode (H2 In-Memory)
+```powershell
+.\mvnw.cmd spring-boot:run
+```
+*App runs on `http://localhost:8080`, with H2 web console active on `http://localhost:8080/h2-console`.*
 
-### Bookings (`/api/bookings`)
-- `POST /api/bookings` — Create a new verified booking
-- `GET /api/bookings/{id}` — Retrieve booking by ID
-- `GET /api/bookings/reference/{ref}` — Retrieve booking receipt by reference code
-- `GET /api/bookings/car/{carId}/booked-ranges` — Get non-cancelled date ranges for calendar blocking
-- `GET /api/bookings/car/{carId}/check-availability` — Verify date range availability
-- `PATCH /api/bookings/{id}/cancel` — Cancel an existing booking
+### Prod Mode (Supabase PostgreSQL Pooler)
+```powershell
+$env:SPRING_PROFILES_ACTIVE="prod"
+$env:SPRING_DATASOURCE_URL="jdbc:postgresql://aws-0-ap-northeast-1.pooler.supabase.com:5432/postgres?sslmode=require"
+$env:SPRING_DATASOURCE_USERNAME="postgres.jazkltqnyqaiywbhtine"
+$env:SPRING_DATASOURCE_PASSWORD="<your_password>"
 
-### AI Search (`/api/ai`)
-- `POST /api/ai/search` — Query cars using natural language with Gemini API
+.\mvnw.cmd spring-boot:run
+```
+
+### Running the Test Suite
+```powershell
+.\mvnw.cmd test
+```
 
 ---
 
-## ⚙️ Running Locally
+## 🎓 60-Second Viva / Presentation Pitch (BCC 351)
 
-### Prerequisites
-- **JDK 21** or later installed
-- **Git**
-- Free **Google Gemini API Key** from [Google AI Studio](https://aistudio.google.com/)
-- PostgreSQL database (or free [Supabase](https://supabase.com/) PostgreSQL instance)
-
-### 1. Clone Repository
-```bash
-git clone https://github.com/MyBeerZ9/Mini-Project.git
-cd Mini-Project
-```
-
-### 2. Configure Environment Variables
-Copy `.env.example` to `.env` or set system environment variables:
-```bash
-cp .env.example .env
-```
-Update the values:
-```properties
-GEMINI_API_KEY=your_gemini_api_key_here
-DB_URL=jdbc:postgresql://<host>:5432/<dbname>?sslmode=require
-DB_USERNAME=your_db_username
-DB_PASSWORD=your_db_password
-```
-
-### 3. Run the Spring Boot Application
-On Windows:
-```cmd
-mvnw.cmd spring-boot:run
-```
-On Linux/macOS:
-```bash
-./mvnw spring-boot:run
-```
-
-### 4. Access the Application
-Open your browser and navigate to:
-```
-http://localhost:8080/
-```
-The static frontend is served directly by Spring Boot, or you can open `index.html` with VS Code Live Server.
-
----
-
-## ☁️ How to Run This Project on GitHub
-
-There are two primary ways to run and test this project directly on GitHub:
-
-### Option A: 1-Click Cloud Execution with GitHub Codespaces
-GitHub Codespaces runs the entire project (Java backend + database connection + frontend) inside a browser-based VS Code environment:
-1. Open your repository: [https://github.com/MyBeerZ9/Mini-Project](https://github.com/MyBeerZ9/Mini-Project)
-2. Click the green **`<> Code`** button.
-3. Switch to the **Codespaces** tab and click **Create codespace on main**.
-4. Once the environment initializes in your browser terminal, run:
-   ```bash
-   ./mvnw spring-boot:run
-   ```
-5. Codespaces will detect port `8080` and show a popup notification: **"Open in Browser"** with a live public/preview URL.
-
-### Option B: Automated Build & Verification with GitHub Actions (CI)
-A continuous integration pipeline is configured under `.github/workflows/maven.yml`:
-- Every `git push` or pull request automatically compiles the code with Java 21, runs tests, and verifies dependencies.
-- You can view build status directly in the **Actions** tab on your GitHub repository.
-
----
-
-## 📖 Academic References
-
-1. **Rathore, S. S., & Chaudhary, S.** (2018). *Analysis of Self Drive Rental Cars Industry in India*. International Journal of Management & Business Studies (IJMBS), 8(4), 24–28. [https://www.ijmbs.com/vol-8-issue-4/](https://www.ijmbs.com/vol-8-issue-4/)
-2. **Mobility Foresights** (2024). *Self-Drive Car Rental Market in India 2024–2030*. [https://mobilityforesights.com/product/self-drive-car-rental-market-in-india](https://mobilityforesights.com/product/self-drive-car-rental-market-in-india)
-3. **Genikomsakis, K. N., & Ioakimidis, C. S.** (2018). *Analysis of potential demand and costs for the business development of an electric vehicle sharing service*. Sustainable Cities and Society, 42, 148–161. [https://doi.org/10.1016/j.scs.2018.06.027](https://doi.org/10.1016/j.scs.2018.06.027)
+> *"Good morning, respected examiners. CARVIA is an AI-powered fleet management and car rental platform designed to solve the critical vulnerabilities of real-world rental operations: double-booking race conditions, regulatory compliance failures, vehicle theft, and static sub-optimal pricing.*
+> 
+> *Our engineering highlights:*
+> 1. *First, we implemented a robust two-tier database architecture managed through Flyway migrations on PostgreSQL, enforcing strict row-level pessimistic write locking to make double-booking mathematically impossible under concurrent requests.*
+> 2. *Second, our Custody & Compliance OS tracks vehicle document expiry dates—automatically blocking expired vehicles from hitting the road—and governs the vehicle custody lifecycle through pre-and-post-trip digital inspections with tamper evidence hashing.*
+> 3. *Third, our real-time Theft Escalation Engine detects geofence breaches and overdue SLAs, immediately locking security deposits and generating a full Audit Dossier.*
+> 4. *Finally, our AI Dynamic Pricing Engine leverages Google Gemini with a deterministic fallback to optimize daily rates and franchise owner yield based on localized demand factors and calendar occupancy.*
+> 
+> *The entire system is deployed with automated integration tests, zero-duplicate data seeders, and a reactive frontend running on Spring Boot 3.3 and Java 21."*

@@ -15,6 +15,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.time.LocalDate;
 import java.util.List;
 
+import com.example.carrental.exception.BookingConflictException;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
@@ -96,7 +98,7 @@ class CarRentalApplicationTests {
         conflictReq.setStartDate(LocalDate.now().plusDays(3));
         conflictReq.setEndDate(LocalDate.now().plusDays(5));
 
-        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> {
+        BookingConflictException ex = assertThrows(BookingConflictException.class, () -> {
             bookingService.createBooking(conflictReq);
         });
 

@@ -19,25 +19,47 @@ public class DataInitializationService implements CommandLineRunner {
 
     private final CarRepository carRepository;
     private final BookingRepository bookingRepository;
+    private final com.example.carrental.repository.PartnerRepository partnerRepository;
 
-    public DataInitializationService(CarRepository carRepository, BookingRepository bookingRepository) {
+    public DataInitializationService(CarRepository carRepository,
+                                   BookingRepository bookingRepository,
+                                   com.example.carrental.repository.PartnerRepository partnerRepository) {
         this.carRepository = carRepository;
         this.bookingRepository = bookingRepository;
+        this.partnerRepository = partnerRepository;
     }
 
     @Override
     public void run(String... args) {
+        seedSamplePartner();
+
         if (carRepository.count() == 0) {
             logger.info("Database is empty. Seeding 14 realistic sample cars for college viva demonstration...");
             seedSampleCars();
             logger.info("Successfully seeded {} cars into the database.", carRepository.count());
         } else {
-            logger.info("Database already contains {} cars. Updating image URLs to exact vehicle images if needed...", carRepository.count());
+            logger.info("Database already contains {} cars. Updating image URLs and compliance dates if needed...", carRepository.count());
             updateExistingCarImages();
         }
 
         if (bookingRepository.count() == 0 && carRepository.count() > 0) {
             seedSampleBookings();
+        }
+    }
+
+    private void seedSamplePartner() {
+        if (!partnerRepository.existsByPartnerCodeIgnoreCase("CARVIA-HQ-DELHI")) {
+            com.example.carrental.entity.Partner partner = new com.example.carrental.entity.Partner();
+            partner.setPartnerName("Apex Mobility Pvt Ltd");
+            partner.setPartnerCode("CARVIA-HQ-DELHI");
+            partner.setContactEmail("fleet@apexmobility.com");
+            partner.setContactPhone("+91 99887 76655");
+            partner.setCity("Delhi");
+            partner.setRevenueSharePercent(82.5);
+            partner.setVerified(true);
+            partner.setActive(true);
+            partnerRepository.save(partner);
+            logger.info("Seeded primary demonstration franchise partner: Apex Mobility Pvt Ltd");
         }
     }
 

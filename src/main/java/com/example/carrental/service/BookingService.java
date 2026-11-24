@@ -4,6 +4,7 @@ import com.example.carrental.dto.BookingRequest;
 import com.example.carrental.dto.BookingResponse;
 import com.example.carrental.entity.Booking;
 import com.example.carrental.entity.Car;
+import com.example.carrental.exception.BookingConflictException;
 import com.example.carrental.exception.ResourceNotFoundException;
 import com.example.carrental.repository.BookingRepository;
 import com.example.carrental.repository.CarRepository;
@@ -22,16 +23,17 @@ public class BookingService {
 
     private final BookingRepository bookingRepository;
     private final CarRepository carRepository;
+    private final PartnerFleetService partnerFleetService;
 
-    public BookingService(BookingRepository bookingRepository, CarRepository carRepository) {
+    public BookingService(BookingRepository bookingRepository,
+                          CarRepository carRepository,
+                          PartnerFleetService partnerFleetService) {
         this.bookingRepository = bookingRepository;
         this.carRepository = carRepository;
+        this.partnerFleetService = partnerFleetService;
     }
 
     public BookingResponse createBooking(BookingRequest request) {
-        Car car = carRepository.findById(request.getCarId())
-                .orElseThrow(() -> new ResourceNotFoundException("Car not found with id: " + request.getCarId()));
-
         if (request.getStartDate() == null || request.getEndDate() == null) {
             throw new IllegalArgumentException("Start date and end date are required");
         }
@@ -44,19 +46,25 @@ public class BookingService {
             throw new IllegalArgumentException("Start date cannot be in the past");
         }
 
-        // Conflict check: Ensure no overlapping active bookings exist for this car
-        List<Booking> conflicts = bookingRepository.findOverlappingBookings(
+        // Lock car entity during booking creation to serialize concurrent reservations for the same vehicle
+        Car car = carRepository.findByIdWithLock(request.getCarId())
+                .orElseThrow(() -> new ResourceNotFoundException("Car not found with id: " + request.getCarId()));
+
+        if (!Boolean.TRUE.equals(car.getAvailable())) {
+            throw new IllegalStateException("Car is currently unavailable for booking");
+        }
+
+        // Validate vehicle compliance documents (RC, Insurance, PUC, Permit) before booking
+        partnerFleetService.validateCarBookingCompliance(car, request.getStartDate());
+
+        // Conflict check: ensure no overlapping active bookings exist
+        List<Booking> conflicts = bookingRepository.findOverlappingBookingsWithLock(
                 request.getCarId(),
                 request.getStartDate(),
                 request.getEndDate()
         );
         if (!conflicts.isEmpty()) {
-            Booking firstConflict = conflicts.get(0);
-            throw new IllegalArgumentException(String.format(
-                    "This vehicle is already reserved from %s to %s. Please select different dates.",
-                    firstConflict.getStartDate(),
-                    firstConflict.getEndDate()
-            ));
+            throw new BookingConflictException("Car is already reserved for the selected dates");
         }
 
         // Calculate total days (e.g. Sep 10 to Sep 10 = 1 day, Sep 10 to Sep 12 = 3 days)
