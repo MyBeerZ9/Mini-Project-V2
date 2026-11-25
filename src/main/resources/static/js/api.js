@@ -8,8 +8,7 @@
  *  3. Same-origin Spring Boot deployment -> /api
  *  4. Manual override via window.CARVIA_API_BASE or localStorage.getItem('CARVIA_API_URL')
  */
-// Placeholder: replace with your actual generated Railway backend domain before/after deploy
-const DEFAULT_RAILWAY_BACKEND_URL = 'https://carvia-backend-production.up.railway.app';
+const DEFAULT_RAILWAY_BACKEND_URL = 'https://carvia-v2-mini-project-g2.up.railway.app';
 
 function normalizeApiBase(rawUrl) {
     const trimmed = rawUrl.trim().replace(/\/+$/, '');
