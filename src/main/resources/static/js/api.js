@@ -1,10 +1,54 @@
 /**
  * AI Car Rental System API Client
  * Centralized HTTP service for interacting with the Spring Boot REST backend.
+ *
+ * Supports:
+ *  1. Local frontend dev servers (Live Server :5500, Vite/Node :3000) -> http://localhost:8080/api
+ *  2. Cloudflare Pages or remote frontend hosting -> Railway backend domain
+ *  3. Same-origin Spring Boot deployment -> /api
+ *  4. Manual override via window.CARVIA_API_BASE or localStorage.getItem('CARVIA_API_URL')
  */
-const API_BASE = window.location.port === '8080' || window.location.port === ''
-    ? '/api'
-    : 'http://localhost:8080/api';
+// Placeholder: replace with your actual generated Railway backend domain before/after deploy
+const DEFAULT_RAILWAY_BACKEND_URL = 'https://carvia-backend-production.up.railway.app';
+
+function normalizeApiBase(rawUrl) {
+    const trimmed = rawUrl.trim().replace(/\/+$/, '');
+    return trimmed.endsWith('/api') ? trimmed : `${trimmed}/api`;
+}
+
+function resolveApiBase() {
+    // 1. Explicit window or localStorage override
+    if (typeof window !== 'undefined' && window.CARVIA_API_BASE) {
+        return normalizeApiBase(window.CARVIA_API_BASE);
+    }
+    if (typeof localStorage !== 'undefined') {
+        const stored = localStorage.getItem('CARVIA_API_URL');
+        if (stored) return normalizeApiBase(stored);
+    }
+
+    if (typeof window === 'undefined') return '/api';
+
+    const hostname = window.location.hostname;
+    const port = window.location.port;
+
+    // 2. Local frontend development on a separate port (e.g. 5500, 3000)
+    if ((hostname === 'localhost' || hostname === '127.0.0.1') && port !== '8080' && port !== '') {
+        return 'http://localhost:8080/api';
+    }
+
+    // 3. Cloudflare Pages or external remote frontend
+    const isCloudflare = hostname.endsWith('.pages.dev');
+    const isExternalFrontend = !['localhost', '127.0.0.1'].includes(hostname) && !hostname.endsWith('.railway.app');
+
+    if (isCloudflare || isExternalFrontend) {
+        return normalizeApiBase(DEFAULT_RAILWAY_BACKEND_URL);
+    }
+
+    // 4. Same-origin (Spring Boot hosting static files or matching domain)
+    return '/api';
+}
+
+const API_BASE = resolveApiBase();
 
 const Api = {
     /**

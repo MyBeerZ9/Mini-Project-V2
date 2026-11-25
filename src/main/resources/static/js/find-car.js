@@ -63,7 +63,7 @@ async function loadAllCars() {
             <div class="empty-state">
                 <div class="empty-state-icon">⚠️</div>
                 <h3 class="empty-state-title">Unable to search cars</h3>
-                <p class="empty-state-desc">Please ensure the backend is running at http://localhost:8080</p>
+                <p class="empty-state-desc">Unable to connect to the fleet vehicle service. Please check your network or try again later.</p>
             </div>
         `;
     }
